@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bjpowernode.dao.BingLiDao">
+    <insert id="insertBingLiDao">
+        insert into bingli(userId,userName,keshiName,doctorName,userBingLi,bingLiTime) values (#{userId},#{userName},#{keshiName},#{doctorName},#{userBingLi},#{bingLiTime})
+    </insert>
+
+    <select id="bingLiAllDao" resultType="com.bjpowernode.domain.BingLi">
+        select userId,userName,keshiName,doctorName,userBingLi,bingLiTime from bingli where userId=#{userId}
+    </select>
+</mapper>

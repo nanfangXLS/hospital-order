@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bjpowernode.dao.DoctorDao">
+    <select id="doctorLoginDao" resultType="com.bjpowernode.domain.Doctor">
+        select doctorPassword,doctorName from doctor where doctorId=#{doctorId}
+    </select>
+    <select id="doctorFindDao" resultType="com.bjpowernode.domain.Doctor">
+        select * from doctor where keshiId=#{keshiId}
+    </select>
+    <select id="doctorNameDao" resultType="com.bjpowernode.domain.Doctor">
+        select * from doctor where doctorId=#{doctorId}
+    </select>
+    <update id="updateNumsDao">
+        update doctor set nums = nums - 1 where doctorId=#{doctorId}
+    </update>
+
+    <select id="doctorAllDao" resultType="com.bjpowernode.domain.Doctor">
+        select * from doctor order by keshiId desc ;
+    </select>
+
+    <delete id="doctorDeleteDao">
+        delete from doctor where doctorId=#{doctorId}
+    </delete>
+
+    <update id="updateDoctorNumsDao">
+        update doctor set nums=20
+    </update>
+</mapper>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       https://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <!--spring配置文件：声明service，dao，工具类等对象-->
+
+    <context:property-placeholder location="classpath:conf/jdbc.properties"/>
+
+    <!--声明数据源，连接数据库-->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+
+    <!--SqlSessionFactoryBean创建SqlSessionFactory-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="configLocation" value="classpath:conf/mybatis.xml"/>
+    </bean>
+
+    <!--申明mybatis的扫描器创建dao对象-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+        <property name="basePackage" value="com.bjpowernode.dao"/>
+    </bean>
+
+
+    <!--声明service的注解@Service所在的包名位置-->
+    <context:component-scan base-package="com.bjpowernode.service"/>
+
+    <!--事务配置：注解的配置，aspectj的配置-->
+
+    <!--使用spring的事务处理-->
+    <!--1.声明事务管理器-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <!--需要知道连接的数据库的信息，指定数据源-->
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <!--2.开启事务注解驱动，告诉spring使用注解管理事务，创建代理对象
+          transaction-manager：事务管理器对象的id
+    -->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <!--Spring的Quartz定时机制-->
+    <bean id="doctorController" class="com.bjpowernode.service.impl.DoctorServiceImpl"></bean>
+    <bean id="mainJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <ref bean="doctorController"/>
+        </property>
+        <property name="targetMethod" value="updateDoctorNums"></property>
+    </bean>
+    <bean id="timeTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail">
+            <ref bean="mainJob"/>
+        </property>
+        <property name="cronExpression">
+            <value>0 0 0 ? * *</value>
+        </property>
+    </bean>
+    <bean id="sfb" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="timeTrigger"/>
+            </list>
+        </property>
+    </bean>
+</beans>

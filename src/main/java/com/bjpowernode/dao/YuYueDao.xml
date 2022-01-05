@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bjpowernode.dao.YuYueDao">
+    <insert id="insertYuYueDao">
+        insert into yuyue(userId,userName,keshiName,doctorId,doctorName,shijian,xuhao) values (#{uid},#{uname},#{kname},#{did},#{dname},#{time},#{num})
+    </insert>
+
+    <select id="yuYueAllDao" resultType="com.bjpowernode.domain.YuYue">
+        select userName,keshiName,doctorName,shijian from yuyue where userId=#{userId}
+    </select>
+
+    <select id="yuYueDoctorAllDao" resultType="com.bjpowernode.domain.YuYue">
+        select xuhao,userId,userName,keshiName,doctorName,shijian from yuyue where doctorId=#{doctorId}
+    </select>
+</mapper>
